@@ -86,7 +86,7 @@ class AtlasGenerator
     void Output(std::vector<uint8_t>& aAtlasDataBuffer,std::string name);
 
     // ! @brief Save The Metadata In .json Format In The Working Directory
-    void OutputMetadata() const;
+    void OutputMetadata(std::string name) const;
 
     private:
     BinaryTreeAlgorithm*        iPackingAlgorithm;

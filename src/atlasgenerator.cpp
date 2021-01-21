@@ -206,18 +206,18 @@ void AtlasGenerator::DrawImages(Node* aNode, std::vector<uint8_t>&
 void AtlasGenerator::Output(std::vector<uint8_t>& aAtlasBuffer,std::string name)
 {
     // save the texture atlas in .png format in the working directory
-    pngutilities::WritePNG(name.data(), iPackingAlgorithm->rootNode()->width,
+    pngutilities::WritePNG((name + ".png").data(), iPackingAlgorithm->rootNode()->width,
                            iPackingAlgorithm->rootNode()->height, &aAtlasBuffer[0]);
 
     // save the metadata in .json format in the working directory
-    OutputMetadata();
+    OutputMetadata(name);
 }
 
 
 //==============================================================================
 // ! @brief Save The Metadata In .json Format In The Working Directory
 //==============================================================================
-void AtlasGenerator::OutputMetadata() const
+void AtlasGenerator::OutputMetadata(std::string name) const
 {
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
@@ -247,7 +247,9 @@ void AtlasGenerator::OutputMetadata() const
 
     writer.EndObject();
 
-    std::ofstream metadataFile("metadata.json");
+    auto jsonFileName = name + "_data.json";
+
+    std::ofstream metadataFile(jsonFileName.data());
     metadataFile << buffer.GetString();
     if (!metadataFile.good())
         throw std::runtime_error("Can't write the JSON string to the file!");
