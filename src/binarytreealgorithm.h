@@ -102,6 +102,10 @@ class BinaryTreeAlgorithm
     //! @return The Pointer To The Node That Stores The Newly Added Image
     Node*  GrowDown(int aWide, int aHeight, const int aImgID);
 
+    int DownChildLength(int count, Node* node);
+
+    int RightChildLength(int count, Node* node);
+
     //! @brief Get the rootNode
     Node*  rootNode()
     {
