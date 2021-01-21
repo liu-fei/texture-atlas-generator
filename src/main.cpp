@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     if (argc < 4)
         {
         // tell the user how to run the application
-        std::cout << "App usage: " << argv[0] << " <image folder> " << "<output file name> " << "<grid grow -- example : right or down or default>" << std::endl;
+        std::cout << "App usage: " << argv[0] << " <image folder> " << "<output file name> " << "<grid grow -- example : right or down>" << std::endl;
         std::cout << "If image folder path contains space, "
                   << "please put the path in double quote." << std::endl;
         return 1;
