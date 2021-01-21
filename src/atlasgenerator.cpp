@@ -48,9 +48,9 @@ AtlasGenerator::~AtlasGenerator()
 //==============================================================================
 //! @brief Run AtlasGenerator
 //==============================================================================
-void AtlasGenerator::Run(std::string name)
+void AtlasGenerator::Run(std::string name,std::string growType)
 {
-    std::vector<uint8_t> atlas = Packing();
+    std::vector<uint8_t> atlas = Packing(growType);
 
     // output texture atlas and metadata to files
     Output(atlas,name);
@@ -60,7 +60,7 @@ void AtlasGenerator::Run(std::string name)
 //==============================================================================
 //! @brief Packing Images Onto The Texture Atlas, Also Collecting Metadata
 //==============================================================================
-std::vector<uint8_t> AtlasGenerator::Packing()
+std::vector<uint8_t> AtlasGenerator::Packing(std::string growType)
 {
     // sort images by their max side, max(width, height) in descendent order
     SortImages();
@@ -79,8 +79,15 @@ std::vector<uint8_t> AtlasGenerator::Packing()
         Node* node = iPackingAlgorithm->Insert(width, height);
         if (node)
             iPackingAlgorithm->SplitNode(node, width, height, i);  // i imgID
-        else    // run out space, grow the canvas
-            node = iPackingAlgorithm->GrowAtlasCanvas(width, height, i);
+        else {
+            if(growType.empty()) {
+                node = iPackingAlgorithm->GrowAtlasCanvas(width, height, i);
+            } else if(growType == "right") {
+                node = iPackingAlgorithm->GrowRight(width, height, i);
+            } else if(growType == "down") {
+                node = iPackingAlgorithm->GrowDown(width, height, i);
+            }
+        }   // run out space, grow the canvas
         }
 
     // create an empty texture atlas with the size indicated by the rootNode of the binary tree

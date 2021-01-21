@@ -64,11 +64,11 @@ class AtlasGenerator
     ~AtlasGenerator();
 
     //! @brief Run AtlasGenerator
-    void Run(std::string name);
+    void Run(std::string name,std::string growType);
 
     private:
     //! @brief Packing Images Onto The Texture Atlas, Also Collecting Metadata
-    std::vector<uint8_t> Packing();
+    std::vector<uint8_t> Packing(std::string growType);
 
     //! @brief Sort Images By Their Max Side, Max(Width, Height) In Descendent Order
     //!        So The One Who Has Largest Side Get Packed First
