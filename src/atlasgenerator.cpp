@@ -48,12 +48,12 @@ AtlasGenerator::~AtlasGenerator()
 //==============================================================================
 //! @brief Run AtlasGenerator
 //==============================================================================
-void AtlasGenerator::Run()
+void AtlasGenerator::Run(std::string name)
 {
     std::vector<uint8_t> atlas = Packing();
 
     // output texture atlas and metadata to files
-    Output(atlas);
+    Output(atlas,name);
 }
 
 
@@ -196,10 +196,10 @@ void AtlasGenerator::DrawImages(Node* aNode, std::vector<uint8_t>&
 //! @brief Output The Texture Atlas Image And Metadata To Files 
 //! @param aAtlasBuffer The Texture Atlas
 //==============================================================================
-void AtlasGenerator::Output(std::vector<uint8_t>& aAtlasBuffer)
+void AtlasGenerator::Output(std::vector<uint8_t>& aAtlasBuffer,std::string name)
 {
     // save the texture atlas in .png format in the working directory
-    pngutilities::WritePNG("texture_atlas.png", iPackingAlgorithm->rootNode()->width,
+    pngutilities::WritePNG(name.data(), iPackingAlgorithm->rootNode()->width,
                            iPackingAlgorithm->rootNode()->height, &aAtlasBuffer[0]);
 
     // save the metadata in .json format in the working directory

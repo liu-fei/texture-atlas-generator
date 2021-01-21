@@ -64,7 +64,7 @@ class AtlasGenerator
     ~AtlasGenerator();
 
     //! @brief Run AtlasGenerator
-    void Run();
+    void Run(std::string name);
 
     private:
     //! @brief Packing Images Onto The Texture Atlas, Also Collecting Metadata
@@ -83,7 +83,7 @@ class AtlasGenerator
 
     //! @brief Output The Texture Atlas And Metadata To Files 
     //! @param aAtlasDataBuffer The Data (Raw Bytes) Of The Texture Atlas
-    void Output(std::vector<uint8_t>& aAtlasDataBuffer);
+    void Output(std::vector<uint8_t>& aAtlasDataBuffer,std::string name);
 
     // ! @brief Save The Metadata In .json Format In The Working Directory
     void OutputMetadata() const;

@@ -21,7 +21,7 @@ std::vector<std::string> GetpngFiles(const char* aArgv1);
 int main(int argc, char* argv[])
 {
     // argc should be 2: application executable name, path to the image folder
-    if (argc != 2)
+    if (argc > 3)
         {
         // tell the user how to run the application
         std::cout << "App usage: " << argv[0] << " <image folder>" << std::endl;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
                 {
                 AtlasGenerator atlasGenerator(pngList);
                 std::cout << "Start generating texture atlas..." << std::endl;
-                atlasGenerator.Run();
+                atlasGenerator.Run(argv[2]);
                 std::cout << "The texture atlas and it's metadata is successfully generated." << std::endl;
                 }
             else
