@@ -49,7 +49,6 @@ struct Image
     int         channels;
 };
 
-
 //==============================================================================
 //! AtlasGenerator Class
 //==============================================================================
@@ -68,7 +67,7 @@ class AtlasGenerator
 
     private:
     //! @brief Packing Images Onto The Texture Atlas, Also Collecting Metadata
-    std::vector<uint8_t> Packing(std::string growType);
+    Atlas Packing(std::string growType);
 
     //! @brief Sort Images By Their Max Side, Max(Width, Height) In Descendent Order
     //!        So The One Who Has Largest Side Get Packed First
@@ -83,10 +82,10 @@ class AtlasGenerator
 
     //! @brief Output The Texture Atlas And Metadata To Files 
     //! @param aAtlasDataBuffer The Data (Raw Bytes) Of The Texture Atlas
-    void Output(std::vector<uint8_t>& aAtlasDataBuffer,std::string name);
+    void Output(Atlas atlas,std::string name);
 
     // ! @brief Save The Metadata In .json Format In The Working Directory
-    void OutputMetadata(std::string name) const;
+    void OutputMetadata(std::string name,int rows,int columns) const;
 
     private:
     BinaryTreeAlgorithm*        iPackingAlgorithm;

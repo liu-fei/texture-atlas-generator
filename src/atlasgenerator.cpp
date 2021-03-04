@@ -44,7 +44,7 @@ AtlasGenerator::~AtlasGenerator()
 //==============================================================================
 void AtlasGenerator::Run(std::string name, std::string growType)
 {
-    std::vector<uint8_t> atlas = Packing(growType);
+    Atlas atlas = Packing(growType);
 
     // output texture atlas and metadata to files
     Output(atlas, name);
@@ -53,10 +53,13 @@ void AtlasGenerator::Run(std::string name, std::string growType)
 //==============================================================================
 //! @brief Packing Images Onto The Texture Atlas, Also Collecting Metadata
 //==============================================================================
-std::vector<uint8_t> AtlasGenerator::Packing(std::string growType)
+Atlas AtlasGenerator::Packing(std::string growType)
 {
     // sort images by their max side, max(width, height) in descendent order
     SortImages();
+    Atlas atlas;
+    atlas.columns = 1;
+    atlas.rows = 1;
 
     // the initiate canvas dimension is set to the first image's dimension
     const int initialWidth = iSortedImageList[0].width;
@@ -74,16 +77,18 @@ std::vector<uint8_t> AtlasGenerator::Packing(std::string growType)
             iPackingAlgorithm->SplitNode(node, width, height, i); // i imgID
         else
         {
-            if (growType.empty())
+            if (growType == "default")
             {
-                node = iPackingAlgorithm->GrowAtlasCanvas(width, height, i);
+                node = iPackingAlgorithm->GrowAtlasCanvas(width, height, i, &atlas);
             }
             else if (growType == "right")
             {
+                atlas.columns += 1;
                 node = iPackingAlgorithm->GrowRight(width, height, i);
             }
             else if (growType == "down")
             {
+                atlas.rows += 1;
                 node = iPackingAlgorithm->GrowDown(width, height, i);
             }
         } // run out space, grow the canvas
@@ -99,7 +104,9 @@ std::vector<uint8_t> AtlasGenerator::Packing(std::string growType)
     // draw images to canvas accoring to their coorespending tree Nodes indicated
     DrawImages(iPackingAlgorithm->rootNode(), atlasBuffer, atlasRowBytes);
 
-    return atlasBuffer;
+    atlas.buffer = atlasBuffer;
+
+    return atlas;
 }
 
 //==============================================================================
@@ -198,20 +205,20 @@ void AtlasGenerator::DrawImages(Node *aNode, std::vector<uint8_t> &aAtlasBuffer,
 //! @brief Output The Texture Atlas Image And Metadata To Files
 //! @param aAtlasBuffer The Texture Atlas
 //==============================================================================
-void AtlasGenerator::Output(std::vector<uint8_t> &aAtlasBuffer, std::string name)
+void AtlasGenerator::Output(Atlas atlas, std::string name)
 {
     // save the texture atlas in .png format in the working directory
     pngutilities::WritePNG((name + ".png").data(), iPackingAlgorithm->rootNode()->width,
-                           iPackingAlgorithm->rootNode()->height, &aAtlasBuffer[0]);
+                           iPackingAlgorithm->rootNode()->height, &atlas.buffer[0]);
 
     // save the metadata in .json format in the working directory
-    OutputMetadata(name);
+    OutputMetadata(name, atlas.rows, atlas.columns);
 }
 
 //==============================================================================
 // ! @brief Save The Metadata In .json Format In The Working Directory
 //==============================================================================
-void AtlasGenerator::OutputMetadata(std::string name) const
+void AtlasGenerator::OutputMetadata(std::string name, int rows, int columns) const
 {
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
@@ -230,10 +237,6 @@ void AtlasGenerator::OutputMetadata(std::string name) const
         writer.Int(img.x);
         writer.Key("y");
         writer.Int(img.y);
-        writer.Key("columns");
-        writer.Int(iPackingAlgorithm->RightChildLength(0, iPackingAlgorithm->rootNode()));
-        writer.Key("rows");
-        writer.Int(iPackingAlgorithm->DownChildLength(0, iPackingAlgorithm->rootNode()));
         writer.Key("width");
         writer.Int(img.width);
         writer.Key("height");
@@ -242,6 +245,18 @@ void AtlasGenerator::OutputMetadata(std::string name) const
     }
     if (iSortedImageList.size() >= 2)
         writer.EndArray();
+
+    writer.Key("SpriteSheet");
+
+    writer.StartObject();
+
+    writer.Key("columns");
+    writer.Int(columns);
+
+    writer.Key("rows");
+    writer.Int(rows);
+
+    writer.EndObject();
 
     writer.EndObject();
 

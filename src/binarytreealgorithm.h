@@ -3,6 +3,8 @@
 // Author       : Fei Liu (liu.s.fei@gmail.com)
 // Description  : Declares BinaryTreeAlgorithm Class
 //==============================================================================
+#include <vector>  // std::vector
+#include <cstdint> // uint8_t
 
 #ifndef BINARYTREEALGORTHM_H
 #define BINARYTREEALGORTHM_H
@@ -52,6 +54,18 @@ struct Node
 };
 
 //==============================================================================
+//! Atlas Struct For Containing Information About the SpriteSheet
+//==============================================================================
+typedef struct
+{
+
+    std::vector<uint8_t> buffer;
+    int columns;
+    int rows;
+
+} Atlas;
+
+//==============================================================================
 //! BinaryTreeAlgorithm Class
 //==============================================================================
 class BinaryTreeAlgorithm
@@ -82,7 +96,7 @@ public:
     //! @param aImgWidth The Image's Width
     //! @param aImgHeight The Image's Height
     //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
-    Node *GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID);
+    Node *GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID, Atlas *atlas);
 
     //! @brief GrowAtlasCanvas Grows Canvas On Right Side
     //! @param aImgWidth The Image's Width
@@ -97,18 +111,6 @@ public:
     //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
     //! @return The Pointer To The Node That Stores The Newly Added Image
     Node *GrowDown(int aWide, int aHeight, const int aImgID);
-
-    //! @brief DownChildLength returns row length
-    //! @param count count should be 0 at start
-    //! @param node rootNode 
-    //! @return Rows in the tree
-    int DownChildLength(int count, Node *node);
-
-    //! @brief RightChildLength returns column length
-    //! @param count count should be 0 at start
-    //! @param node rootNode 
-    //! @return Columns in the tree
-    int RightChildLength(int count, Node *node);
 
     //! @brief Get the rootNode
     Node *rootNode()

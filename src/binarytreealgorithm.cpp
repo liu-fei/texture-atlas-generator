@@ -82,7 +82,7 @@ void BinaryTreeAlgorithm::SplitNode(Node *aNode, const int aImgWidth, const int 
 //! @param aImgHeight The Image's Height
 //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
 //========================================================================================
-Node *BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID)
+Node *BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID, Atlas *atlas)
 {
     bool canGrowRight = (aImgHeight <= iRootNode->height);
     bool canGrowDown = (aImgWidth <= iRootNode->width);
@@ -91,13 +91,25 @@ Node *BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgHe
     bool shouldGrowDown = canGrowDown && (iRootNode->width >= (iRootNode->height + aImgHeight));
 
     if (shouldGrowRight)
+    {
+        atlas->columns += 1;
         return GrowRight(aImgWidth, aImgHeight, aImgID);
+    }
     else if (shouldGrowDown)
+    {
+        atlas->rows += 1;
         return GrowDown(aImgWidth, aImgHeight, aImgID);
+    }
     else if (canGrowRight)
+    {
+        atlas->columns += 1;
         return GrowRight(aImgWidth, aImgHeight, aImgID);
+    }
     else if (canGrowDown)
+    {
+        atlas->rows += 1;
         return GrowDown(aImgWidth, aImgHeight, aImgID);
+    }
     else
         return nullptr;
 }
@@ -129,29 +141,6 @@ Node *BinaryTreeAlgorithm::GrowRight(int aImgWidth, int aImgHeight, const int aI
     else
         return nullptr;
 }
-
-int BinaryTreeAlgorithm::DownChildLength(int count, Node *node)
-{
-
-    if (node->downChild)
-        return DownChildLength(count + 1, node->downChild);
-    else
-        return count;
-
-    return count;
-}
-
-int BinaryTreeAlgorithm::RightChildLength(int count, Node *node)
-{
-
-    if (node->rightChild)
-        return RightChildLength(count + 1, node->downChild);
-    else
-        return count;
-
-    return count;
-}
-
 //========================================================================================
 //! @brief GrowAtlasCanvas Grows Canvas On Down Side
 //! @param aImgWidth The Image's Width
