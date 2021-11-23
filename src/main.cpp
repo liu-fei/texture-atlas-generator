@@ -21,10 +21,10 @@ std::vector<std::string> GetpngFiles(const char* aArgv1);
 int main(int argc, char* argv[])
 {
     // argc should be 2: application executable name, path to the image folder
-    if (argc != 2)
+    if (argc < 4)
         {
         // tell the user how to run the application
-        std::cout << "App usage: " << argv[0] << " <image folder>" << std::endl;
+        std::cout << "App usage: " << argv[0] << " <image folder> " << "<output file name> " << "<grid grow -- example : right or down or default>" << std::endl;
         std::cout << "If image folder path contains space, "
                   << "please put the path in double quote." << std::endl;
         return 1;
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
                 {
                 AtlasGenerator atlasGenerator(pngList);
                 std::cout << "Start generating texture atlas..." << std::endl;
-                atlasGenerator.Run();
+                atlasGenerator.Run(argv[2],argv[3]);
                 std::cout << "The texture atlas and it's metadata is successfully generated." << std::endl;
                 }
             else

@@ -5,8 +5,7 @@
 //========================================================================================
 
 #include "binarytreealgorithm.h"
-#include <iostream>                 // std::cout
-
+#include <iostream> // std::cout
 
 //========================================================================================
 //! @brief Starts Packing Process To A Texture Atlas Canvas Of The Given Dimension
@@ -20,7 +19,6 @@ void BinaryTreeAlgorithm::Init(const int aAtlasWidth, const int aAtlasHeight)
     iRootNode = new Node(0, 0, aAtlasWidth, aAtlasHeight);
 }
 
-
 //========================================================================================
 //! @brief Inserts The Image In The Binary Tree
 //! @param aImgWidth The The Image's Width
@@ -28,11 +26,10 @@ void BinaryTreeAlgorithm::Init(const int aAtlasWidth, const int aAtlasHeight)
 //! @return The Pointer To The Node That Stores The Image
 //!         or nullptr If It Didn't Fit In The Binary Tree
 //========================================================================================
-Node* BinaryTreeAlgorithm::Insert(const int aImgWidth, const int aImgHeight) const
+Node *BinaryTreeAlgorithm::Insert(const int aImgWidth, const int aImgHeight) const
 {
     return Insert(iRootNode, aImgWidth, aImgHeight);
 }
-
 
 //========================================================================================
 //! @brief Inserts An Image In The Subtree Rooted At The Given Node
@@ -42,35 +39,34 @@ Node* BinaryTreeAlgorithm::Insert(const int aImgWidth, const int aImgHeight) con
 //! @return The Pointer To The Node That Stores The Newly Added Image
 //          or nullptr If It Didn't Fit
 //========================================================================================
-Node* BinaryTreeAlgorithm::Insert(Node* aNode, const int aImgWidth, const int aImgHeight) const
+Node *BinaryTreeAlgorithm::Insert(Node *aNode, const int aImgWidth, const int aImgHeight) const
 {
     if (aNode->isUsed)
-        {
+    {
         // recursively try aNode's children branchs
-        if (Node* here = Insert(aNode->rightChild, aImgWidth, aImgHeight))
+        if (Node *here = Insert(aNode->rightChild, aImgWidth, aImgHeight))
             return here;
-        else if (Node* there = Insert(aNode->downChild, aImgWidth, aImgHeight))
+        else if (Node *there = Insert(aNode->downChild, aImgWidth, aImgHeight))
             return there;
         else
             return nullptr;
-        }
+    }
     // the image fits in this node
     else if (aImgWidth <= aNode->width && aImgHeight <= aNode->height)
         return aNode;
-    else    // the image can not fit in this node
+    else // the image can not fit in this node
         return nullptr;
 }
 
-
 //========================================================================================
-//! @brief SplitNode Happens Every Time After Placing An Image 
+//! @brief SplitNode Happens Every Time After Placing An Image
 //         On The Top Left Corner Of An Empty Rectangular
-//! @param aNode The Node Where The Image Just Inserted  
+//! @param aNode The Node Where The Image Just Inserted
 //! @param aImgWidth The Image's Width
 //! @param aImgHeight The Image's Height
 //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
 //========================================================================================
-void  BinaryTreeAlgorithm::SplitNode(Node* aNode, const int aImgWidth, const int aImgHeight, const int aImgID)
+void BinaryTreeAlgorithm::SplitNode(Node *aNode, const int aImgWidth, const int aImgHeight, const int aImgID)
 {
     aNode->rightChild = new Node(aNode->x + aImgWidth, aNode->y, aNode->width - aImgWidth, aImgHeight);
     aNode->downChild = new Node(aNode->x, aNode->y + aImgHeight, aNode->width, aNode->height - aImgHeight);
@@ -79,7 +75,6 @@ void  BinaryTreeAlgorithm::SplitNode(Node* aNode, const int aImgWidth, const int
     aNode->imgID = aImgID;
 }
 
-
 //========================================================================================
 //! @brief GrowAtlasCanvas Provides An Algorithm Which Decides Where The Canvas Should Expend,
 //         On Its Right Side by Call GrowRight Method Or On Its Down Side by Call GrowDown Method
@@ -87,7 +82,7 @@ void  BinaryTreeAlgorithm::SplitNode(Node* aNode, const int aImgWidth, const int
 //! @param aImgHeight The Image's Height
 //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
 //========================================================================================
-Node*  BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID)
+Node *BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgHeight, const int aImgID, Atlas *atlas)
 {
     bool canGrowRight = (aImgHeight <= iRootNode->height);
     bool canGrowDown = (aImgWidth <= iRootNode->width);
@@ -96,17 +91,28 @@ Node*  BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgH
     bool shouldGrowDown = canGrowDown && (iRootNode->width >= (iRootNode->height + aImgHeight));
 
     if (shouldGrowRight)
+    {
+        atlas->columns += 1;
         return GrowRight(aImgWidth, aImgHeight, aImgID);
+    }
     else if (shouldGrowDown)
+    {
+        atlas->rows += 1;
         return GrowDown(aImgWidth, aImgHeight, aImgID);
+    }
     else if (canGrowRight)
+    {
+        atlas->columns += 1;
         return GrowRight(aImgWidth, aImgHeight, aImgID);
+    }
     else if (canGrowDown)
+    {
+        atlas->rows += 1;
         return GrowDown(aImgWidth, aImgHeight, aImgID);
+    }
     else
         return nullptr;
 }
-
 
 //========================================================================================
 //! @brief GrowAtlasCanvas Grows Canvas On Right Side
@@ -115,9 +121,9 @@ Node*  BinaryTreeAlgorithm::GrowAtlasCanvas(const int aImgWidth, const int aImgH
 //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
 //! @return The Pointer To The Node That Stores The Newly Added Image
 //========================================================================================
-Node*  BinaryTreeAlgorithm::GrowRight(int aImgWidth, int aImgHeight, const int aImgID)
+Node *BinaryTreeAlgorithm::GrowRight(int aImgWidth, int aImgHeight, const int aImgID)
 {
-    Node* newRoot = new Node(0, 0, iRootNode->width + aImgWidth, iRootNode->height);
+    Node *newRoot = new Node(0, 0, iRootNode->width + aImgWidth, iRootNode->height);
     newRoot->isUsed = true;
 
     // for new image
@@ -127,16 +133,14 @@ Node*  BinaryTreeAlgorithm::GrowRight(int aImgWidth, int aImgHeight, const int a
     iRootNode = newRoot;
 
     // insert the new image in the new root node
-    if (Node* node = Insert(iRootNode, aImgWidth, aImgHeight))
-        {
+    if (Node *node = Insert(iRootNode, aImgWidth, aImgHeight))
+    {
         SplitNode(node, aImgWidth, aImgHeight, aImgID);
         return node;
-        }
+    }
     else
         return nullptr;
 }
-
-
 //========================================================================================
 //! @brief GrowAtlasCanvas Grows Canvas On Down Side
 //! @param aImgWidth The Image's Width
@@ -144,9 +148,9 @@ Node*  BinaryTreeAlgorithm::GrowRight(int aImgWidth, int aImgHeight, const int a
 //! @param aImgID The Corresponding Index Of The Image In iSortedImageList Is Used As aImgID
 //! @return The Pointer To The Node That Stores The Newly Added Image
 //========================================================================================
-Node*  BinaryTreeAlgorithm::GrowDown(int aImgWidth, int aImgHeight, const int aImgID)
+Node *BinaryTreeAlgorithm::GrowDown(int aImgWidth, int aImgHeight, const int aImgID)
 {
-    Node* newRoot = new Node(0, 0, iRootNode->width, iRootNode->height + aImgHeight);
+    Node *newRoot = new Node(0, 0, iRootNode->width, iRootNode->height + aImgHeight);
     newRoot->isUsed = true;
 
     newRoot->rightChild = iRootNode;
@@ -154,11 +158,11 @@ Node*  BinaryTreeAlgorithm::GrowDown(int aImgWidth, int aImgHeight, const int aI
 
     iRootNode = newRoot;
 
-    if (Node* node = Insert(iRootNode, aImgWidth, aImgHeight))
-        {
+    if (Node *node = Insert(iRootNode, aImgWidth, aImgHeight))
+    {
         SplitNode(node, aImgWidth, aImgHeight, aImgID);
         return node;
-        }
+    }
     else
         return nullptr;
 }
